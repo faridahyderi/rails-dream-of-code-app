@@ -1,0 +1,176 @@
+# Create the Spring 2026 trimester
+Trimester.create!(
+  term: "Spring",
+  year: 2026,
+  application_deadline: Date.new(2026, 1, 15),
+  start_date: Date.new(2026, 2, 1),
+  end_date: Date.new(2026, 5, 31)
+)
+
+# Assign each CodingClass to that trimester
+trimester = Trimester.find_by(term: "Spring", year: "2026")
+CodingClass.all.each do |coding_class|
+  Course.create!(
+    coding_class: coding_class,
+    trimester: trimester
+  )
+end
+
+Question 2
+student = Student.create!(
+  first_name: "Farida",
+  last_name: "Hyderi",
+  email: "faridahyderi@gmail.com"
+)
+
+trimester = Trimester.find_by(term: "Spring", year: "2026")
+coding_class = CodingClass.find_by(title: "Intro to Programming")
+intro_course = Course.find_by(coding_class: coding_class, trimester: trimester)
+
+enrollment = Enrollment.create!(
+  student: student,
+  course: intro_course
+)
+
+mentor = Mentor.first
+MentorEnrollmentAssignment.create!(
+  mentor: mentor,
+  enrollment: enrollment
+)
+
+Question 3
+
+Blogging Platform
+
+Admin role who can manage users and moderate posts/comments.
+Registered User: Can create blog posts and leave comments on any post.
+
+main actions users can take in the app:
+
+Posts
+A user can create a blog post with a title and body.
+
+A user can view all blog posts on a homepage.
+
+A user can view a detailed page for a single post.
+
+A user can edit or delete their own posts.
+
+Comments
+
+A user can add comments to any post.
+
+A user can see all comments on a post.
+
+A user can delete their own comments.
+
+Example User Flow
+A user signs up or logs in.
+
+They land on a homepage that lists recent blog posts.
+
+They can click a post to read it fully and see comments.
+
+They can write their own post, or comment on another post.
+
+They can go to their dashboard to manage their own posts.
+
+Possible Data Models
+User: name, email, password_digest
+→ has_many :posts
+→ has_many :comments
+
+Post: title, body, user_id
+→ belongs_to :user
+→ has_many :comments
+
+Comment: body, user_id, post_id
+→ belongs_to :user
+→ belongs_to :post
+
+Question 4
+
+ERD
+1. Users
+
+Table name: users
+Columns:
+
+id (primary key)
+
+name (string)
+
+email (string, unique)
+
+password_digest (string, for secure passwords via has_secure_password)
+
+created_at (datetime)
+
+updated_at (datetime)
+
+Associations:
+
+has_many :posts
+
+has_many :comments
+
+2. Posts
+
+Table name: posts
+Columns:
+
+id (primary key)
+
+title (string)
+
+body (text)
+
+user_id (foreign key)
+
+created_at (datetime)
+
+updated_at (datetime)
+
+Associations:
+
+belongs_to :user
+
+has_many :comments
+
+ 3. Comments
+ 
+Table name: comments
+Columns:
+
+id (primary key)
+
+body (text)
+
+user_id (foreign key)
+
+post_id (foreign key)
+
+created_at (datetime)
+
+updated_at (datetime)
+
+Associations:
+
+belongs_to :user
+
+belongs_to :post
+
+Relationships Summary
+A User has many Posts
+
+A User has many Comments
+
+A Post belongs to a User
+
+A Post has many Comments
+
+A Comment belongs to a User
+
+A Comment belongs to a Post
+
+

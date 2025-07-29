@@ -1,0 +1,36 @@
+introclass = CodingClass.find_by(title: "Intro to Programming")
+
+spring2025 = Trimester.find_by(year: 2025, term: "Spring")
+
+introcourse = Course.find_by(coding_class: introclass, trimester: spring2025)
+
+enrollments = Enrollment.where(course: introcourse).includes(:student)
+
+enrollments.first(2).each do |enrollment|
+  student = enrollment.student
+  puts "#{student.id}, #{student.email}"
+end
+
+
+output:
+
+41, dave_skiles@lueilwitz.test
+42, venita_collier@tremblay.example
+
+
+Question 2
+
+introclass = CodingClass.find_by(title: "Intro to Programming")
+spring2025 = Trimester.find_by(year: 2025, term: "Spring")
+introcourse = Course.find_by(coding_class: introclass, trimester: spring2025)
+
+enrollments_no_grade = Enrollment.where(course: introcourse, final_grade: [nil, ""])
+mentor_assignments = MentorEnrollmentAssignment.where(enrollment: enrollments_no_grade).includes(:mentor)
+
+mentor_assignments.map(&:mentor).uniq.first(2).each do |mentor|
+  puts "#{mentor.id}, #{mentor.email}"
+end
+
+output:
+25, darcel@towne.test
+26, raleigh@littel.example

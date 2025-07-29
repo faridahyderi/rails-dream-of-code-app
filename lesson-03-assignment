@@ -1,0 +1,60 @@
+1. Tables to add:
+- topics
+- lesson_topics (join table)
+
+2. Columns and associations:
+- topics: name (string)
+- lesson_topics: topic_id (references), lesson_id (references)
+
+3. Other data:
+- topics needs timestamps and unique names
+
+4. Table schema:
+topics (id, name:string, timestamps)
+lesson_topics (id, lesson_id:references, topic_id:references, timestamps)
+
+5. Generator commands:
+rails generate migration create_topics name:string
+rails generate migration create_lesson_topics lesson:references topic:references
+
+6. Explanation of tables and associations
+The topics table stores the list of unique lesson topics like "CSS", "SQL", and others.
+
+Since a lesson can have many topics and a topic can belong to many lessons, we implemented a many-to-many relationship using the join table lesson_topics. 
+This table links lessons and topics via their foreign keys lesson_id and topic_id.
+
+7. Description of additional columns and constraints
+The topics table includes a unique index on the name column to ensure no duplicate topics exist.
+
+Both tables have timestamps to track creation and update times for data integrity and auditing.
+
+8. Migration details
+The create_topics migration defines the topics table with a string column for name and timestamps.
+
+The create_lesson_topics migration defines the join table with lesson_id and topic_id references, foreign key constraints, and timestamps.
+
+9. Testing models and associations
+After running the migrations with bin/rails db:migrate, I created the Topic and LessonTopic models with the appropriate has_many and belongs_to associations.
+
+I updated the existing Lesson model to include:
+
+ruby
+Copy
+Edit
+has_many :lesson_topics
+has_many :topics, through: :lesson_topics
+I tested the associations in the Rails console by creating topic records and associating them with lessons:
+
+ruby
+Copy
+Edit
+topics = ["SQL", "Data Modeling", "Javascript", "CSS", "Automated Testing", "Debugging", "Web Request Cycle", "HTTP"]
+
+topics.each do |name|
+  Topic.find_or_create_by!(name: name)
+end
+
+lesson = Lesson.first
+topic = Topic.find_by(name: "CSS")
+lesson.topics << topic unless lesson.topics.include?(topic)
+I confirmed that topics were properly linked to lessons through the join table.
