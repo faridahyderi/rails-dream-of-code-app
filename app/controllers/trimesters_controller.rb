@@ -1,9 +1,47 @@
 class TrimestersController < ApplicationController
+  before_action :set_trimester, only: [:show, :edit, :update]
+
   def index
     @trimesters = Trimester.all
   end
+
   def show
+    # @trimester is already set by set_trimester
+  end
+
+  def edit
+    # @trimester is already set by set_trimester
+  end
+
+  def update
+    if params[:trimester].blank? || params[:trimester][:application_deadline].blank?
+      head :bad_request
+      return
+    end
+  
+    begin
+      Date.parse(params[:trimester][:application_deadline])
+    rescue ArgumentError
+      head :bad_request
+      return
+    end
+  
+    if @trimester.update(trimester_params)
+      redirect_to trimesters_path, notice: "Trimester was successfully updated."
+    else
+      render :edit, status: :unprocessable_entity
+    end
+  end
+  
+  private
+
+  def set_trimester
     @trimester = Trimester.find(params[:id])
   end
+
+  def trimester_params
+    params.require(:trimester).permit(:title, :description, :application_deadline)
+  end
 end
+
 

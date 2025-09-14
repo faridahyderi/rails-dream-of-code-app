@@ -1,36 +1,69 @@
 class SubmissionsController < ApplicationController
-  # GET /submissions/new
+  before_action :set_course
+  before_action :set_submission, only: [:edit, :update, :destroy]
+
+  # GET /courses/:course_id/submissions/new
   def new
-    @course = Course.find(params[:course_id])
     @submission = Submission.new
-    @enrollments # TODO: What set of enrollments should be listed in the dropdown?
-    @lessons # TODO: What set of lessons should be listed in the dropdown?
+    @enrollments = @course.enrollments  # only students enrolled in this course
+    @lessons = @course.lessons          # only lessons for this course
   end
 
+  # POST /courses/:course_id/submissions
   def create
-    @course = Course.find(params[:course_id])
-    @submission = Submission.new(submission_params)
+    @submission = @course.submissions.new(submission_params)
 
     if @submission.save
-      redirect_to course_path(@course), notice: 'Submission was successfully created.'
+      redirect_to course_path(@course), notice: "Submission was successfully created."
     else
-      @enrollments # TODO: Set this up just as in the new action
-      @lessons # TODO: Set this up just as in the new action
-      render :new
+      @enrollments = @course.enrollments
+      @lessons = @course.lessons
+      render :new, status: :unprocessable_entity
+    end
+  end
+  
+
+  # GET /courses/:course_id/submissions/:id/edit
+  def edit
+    @enrollments = @course.enrollments
+    @lessons = @course.lessons
+  end
+
+  # PATCH/PUT /courses/:course_id/submissions/:id
+  def update
+    if @submission.update(mentor_review_params)
+      redirect_to course_path(@course), notice: "Submission was successfully updated."
+    else
+      @enrollments = @course.enrollments
+      @lessons = @course.lessons
+      render :edit, status: :unprocessable_entity
     end
   end
 
-  # GET /submissions/1/edit
-  def edit
-  end
-
-  # PATCH/PUT /submissions/1 or /submissions/1.json
-  def update
+  # DELETE /courses/:course_id/submissions/:id
+  def destroy
+    @submission.destroy
+    redirect_to course_path(@course), notice: "Submission was successfully deleted."
   end
 
   private
-    # Only allow a list of trusted parameters through.
-    def submission_params
-      params.require(:submission).permit(:lesson_id, :enrollment_id, :mentor_id, :review_result, :reviewed_at)
+
+    def set_course
+      @course = Course.find(params[:course_id])
     end
+
+    def set_submission
+      @submission = Submission.find(params[:id])
+    end
+
+    def submission_params
+      params.require(:submission).permit(:lesson_id, :enrollment_id, :pull_request_url)
+    end
+    
+    def mentor_review_params
+      # mentor params
+      params.require(:submission).permit(:review_result, :reviewed_at, :mentor_id)
+    end
+    
 end
+

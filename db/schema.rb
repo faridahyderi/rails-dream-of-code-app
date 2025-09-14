@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_07_29_185850) do
+ActiveRecord::Schema[8.0].define(version: 2025_09_09_160254) do
   create_table "coding_classes", force: :cascade do |t|
     t.string "title"
     t.text "description"
@@ -93,6 +93,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_07_29_185850) do
     t.datetime "reviewed_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "course_id", null: false
+    t.index ["course_id"], name: "index_submissions_on_course_id"
     t.index ["enrollment_id"], name: "index_submissions_on_enrollment_id"
     t.index ["lesson_id"], name: "index_submissions_on_lesson_id"
     t.index ["mentor_id"], name: "index_submissions_on_mentor_id"
@@ -124,4 +126,5 @@ ActiveRecord::Schema[8.0].define(version: 2025_07_29_185850) do
   add_foreign_key "lessons", "courses"
   add_foreign_key "mentor_enrollment_assignments", "enrollments"
   add_foreign_key "mentor_enrollment_assignments", "mentors"
+  add_foreign_key "submissions", "courses"
 end
