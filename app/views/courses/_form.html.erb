@@ -1,24 +1,29 @@
-<%= form_with(model: course) do |form| %>
-  <% if course.errors.any? %>
+<%= form_with(model: @course, local: true) do |form| %>
+  <% if @course.errors.any? %>
     <div style="color: red">
-      <h2><%= pluralize(course.errors.count, "error") %> prohibited this course from being saved:</h2>
-
+      <h2><%= pluralize(@course.errors.count, "error") %> prohibited this course from being saved:</h2>
       <ul>
-        <% course.errors.each do |error| %>
-          <li><%= error.full_message %></li>
+        <% @course.errors.full_messages.each do |msg| %>
+          <li><%= msg %></li>
         <% end %>
       </ul>
     </div>
   <% end %>
 
   <div>
-    <%= form.label :coding_class_id, style: "display: block" %>
-    <%= form.text_field :coding_class_id %>
+    <%= form.label :coding_class_id, "Coding Class", style: "display: block" %>
+    <%= form.collection_select :coding_class_id, CodingClass.all, :id, :title, prompt: "Select a class" %>
+    <p style="font-size: small; color: gray;">
+      Each class also has a description: <%= CodingClass.first&.description %>
+    </p>
   </div>
 
   <div>
-    <%= form.label :trimester_id, style: "display: block" %>
-    <%= form.text_field :trimester_id %>
+    <%= form.label :trimester_id, "Trimester", style: "display: block" %>
+    <%= form.collection_select :trimester_id, Trimester.all,:id, :display_name, prompt: "Select a trimester" %>
+    <p style="font-size: small; color: gray;">
+      Deadline and details come from its description.
+    </p>
   </div>
 
   <div>
@@ -27,6 +32,6 @@
   </div>
 
   <div>
-    <%= form.submit %>
+    <%= form.submit class: "btn btn-primary" %>
   </div>
 <% end %>
