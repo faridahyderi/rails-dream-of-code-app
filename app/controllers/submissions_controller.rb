@@ -1,6 +1,8 @@
 class SubmissionsController < ApplicationController
   before_action :set_course
   before_action :set_submission, only: [:edit, :update, :destroy]
+  before_action :require_student, only: [:new, :create]
+  before_action :require_mentor_or_admin, only: [:edit, :update]
 
   # GET /courses/:course_id/submissions/new
   def new
@@ -64,6 +66,15 @@ class SubmissionsController < ApplicationController
       # mentor params
       params.require(:submission).permit(:review_result, :reviewed_at, :mentor_id)
     end
-    
+    def require_mentor_or_admin
+      unless ["mentor", "admin"].include?(session[:role])
+        redirect_to root_path, alert: "You do not have access to review submissions."
+      end
+    end  
+    def require_student
+      unless session[:role] == "student"
+        redirect_to root_path, alert: "Only students can create submissions."
+      end
+    end
 end
 

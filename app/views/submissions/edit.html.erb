@@ -1,0 +1,24 @@
+<h1>Edit Submission</h1>
+
+<%= form_with model: [@course, @submission], local: true do |form| %>
+  <div class="field">
+    <%= form.label :pull_request_url %>
+    <%= form.text_field :pull_request_url %>
+  </div>
+
+  <% if ["mentor", "admin"].include?(session[:role]) %>
+    <div class="field">
+      <%= form.label :review_result %>
+      <%= form.text_field :review_result %>
+    </div>
+
+    <div class="field">
+      <%= form.label :reviewed_at %>
+      <%= form.datetime_select :reviewed_at %>
+    </div>
+  <% end %>
+
+  <div class="actions">
+    <%= form.submit %>
+  </div>
+<% end %>

@@ -25,4 +25,8 @@ Rails.application.routes.draw do
   get "/mentors", to: "mentors#index"
   get "/mentors/:id", to: "mentors#show"
   get "/dashboard", to: "admin_dashboard#index"
+
+  get 'login', to: 'sessions#new'
+  post 'login', to: 'sessions#create'
+  delete 'logout', to: 'sessions#destroy'
 end

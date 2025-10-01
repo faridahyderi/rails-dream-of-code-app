@@ -1,4 +1,5 @@
 class AdminDashboardController < ApplicationController
+  before_action :require_admin
   def index
     @current_trimester = Trimester
       .where("start_date <= ?", Date.today)
