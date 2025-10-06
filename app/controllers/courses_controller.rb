@@ -1,4 +1,5 @@
 class CoursesController < ApplicationController
+  before_action :require_admin, only: [:new, :create, :edit, :update, :destroy]
   before_action :set_course, only: %i[ show edit update destroy ]
 
   # GET /courses or /courses.json
@@ -8,6 +9,7 @@ class CoursesController < ApplicationController
 
   # GET /courses/1 or /courses/1.json
   def show
+    @course = Course.find(params[:id])
   end
 
   # GET /courses/new
@@ -21,6 +23,20 @@ class CoursesController < ApplicationController
 
   # POST /courses or /courses.json
   def create
+    @course = Course.new(course_params)
+
+    respond_to do |format|
+      if @course.save
+        format.html { redirect_to @course, notice: "Course was successfully created." }
+        format.json { render :show, status: :created, location: @course }
+      else
+        format.html { render :new, status: :unprocessable_entity }
+        format.json { render json: @course.errors, status: :unprocessable_entity }
+      end
+    end
+  end
+  def course_params
+    params.require(:course).permit(:coding_class_id, :trimester_id, :max_enrollment)
   end
 
   # PATCH/PUT /courses/1 or /courses/1.json
