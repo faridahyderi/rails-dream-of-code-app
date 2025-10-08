@@ -4,7 +4,9 @@ Rails.application.routes.draw do
   resources :enrollments
   resources :mentor_enrollment_assignments
   resources :lessons
-  resources :courses
+  resources :courses do
+    resources :submissions, only: [:new, :create, :edit, :update, :destroy]
+  end
   resources :coding_classes
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 
@@ -18,4 +20,20 @@ Rails.application.routes.draw do
 
   # Defines the root path route ("/")
   root "home#index"
+  resources :trimesters, only: [:index, :show, :edit, :update]
+
+  get "/mentors", to: "mentors#index"
+  get "/mentors/:id", to: "mentors#show"
+  get "/dashboard", to: "admin_dashboard#index"
+
+  get 'login', to: 'sessions#new'
+  post 'login', to: 'sessions#create'
+  delete 'logout', to: 'sessions#destroy'
+
+  namespace :api do
+    namespace :v1 do
+      get '/courses', to: 'courses#index'
+      get '/courses/:course_id/enrollments', to: 'enrollments#index'
+    end
+  end
 end
