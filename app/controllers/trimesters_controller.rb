@@ -51,6 +51,7 @@ class TrimestersController < ApplicationController
     @trimester.destroy
     redirect_to trimesters_path, notice: "Trimester deleted successfully."
   end
+  
   private
 
   def set_trimester
